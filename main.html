@@ -1,0 +1,363 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مفكرة التداول - Trading Journal</title>
+    <link href="style.css" rel="stylesheet" type="text/css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1><a href="index.html" style="color: white; text-decoration: none;"><i class="fas fa-chart-line"></i> <span data-translate="app_title">مفكرة التداول</span></a></h1>
+            <ul class="nav-menu">
+                <li><a href="#dashboard" class="nav-link active" data-page="dashboard"><i class="fas fa-tachometer-alt"></i> <span data-translate="dashboard">لوحة القيادة</span></a></li>
+                <li><a href="#add-trade" class="nav-link" data-page="add-trade"><i class="fas fa-plus"></i> <span data-translate="add_trade">إضافة صفقة</span></a></li>
+                <li><a href="#trade-history" class="nav-link" data-page="trade-history"><i class="fas fa-history"></i> <span data-translate="trade_history">سجل الصفقات</span></a></li>
+                <li><a href="#analysis" class="nav-link" data-page="analysis"><i class="fas fa-analytics"></i> <span data-translate="analysis">تحليل الأداء</span></a></li>
+                <li><a href="#notes" class="nav-link" data-page="notes"><i class="fas fa-sticky-note"></i> <span data-translate="notes">الملاحظات</span></a></li>
+                <li><a href="#review" class="nav-link" data-page="review"><i class="fas fa-star"></i> <span data-translate="review">تقييم النفس</span></a></li>
+                <li><button id="language-toggle" class="btn btn-small language-btn"><i class="fas fa-globe"></i> EN</button></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <!-- Dashboard Page -->
+        <div id="dashboard" class="page active">
+            <div class="page-header">
+                <h2><i class="fas fa-tachometer-alt"></i> <span data-translate="dashboard">لوحة القيادة</span></h2>
+                <p data-translate="dashboard_desc">نظرة عامة على أداء التداول</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card profit">
+                    <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
+                    <div class="stat-content">
+                        <h3 id="total-profit">$0.00</h3>
+                        <p data-translate="total_profit_loss">إجمالي الأرباح/الخسائر</p>
+                    </div>
+                </div>
+                <div class="stat-card success">
+                    <div class="stat-icon"><i class="fas fa-percentage"></i></div>
+                    <div class="stat-content">
+                        <h3 id="win-rate">0%</h3>
+                        <p data-translate="win_rate">نسبة الصفقات الرابحة</p>
+                    </div>
+                </div>
+                <div class="stat-card trades">
+                    <div class="stat-icon"><i class="fas fa-exchange-alt"></i></div>
+                    <div class="stat-content">
+                        <h3 id="total-trades">0</h3>
+                        <p data-translate="total_trades">إجمالي الصفقات</p>
+                    </div>
+                </div>
+                <div class="stat-card average">
+                    <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                    <div class="stat-content">
+                        <h3 id="avg-profit">$0.00</h3>
+                        <p data-translate="avg_profit">متوسط الربح/الخسارة</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="charts-container">
+                <div class="chart-card">
+                    <h3>توزيع الأرباح والخسائر</h3>
+                    <canvas id="profitChart"></canvas>
+                </div>
+                <div class="chart-card">
+                    <h3>الأداء الأسبوعي</h3>
+                    <canvas id="weeklyChart"></canvas>
+                </div>
+                <div class="chart-card">
+                    <h3>وقت الدخول وسبب الخروج</h3>
+                    <canvas id="timeExitChart"></canvas>
+                </div>
+            </div>
+
+            <div class="recent-trades">
+                <h3>الصفقات الأخيرة</h3>
+                <div id="recent-trades-list">
+                    <p class="no-data">لا توجد صفقات بعد</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Trade Page -->
+        <div id="add-trade" class="page">
+            <div class="page-header">
+                <h2><i class="fas fa-plus"></i> إضافة صفقة جديدة</h2>
+                <p>سجل تفاصيل صفقتك</p>
+            </div>
+
+            <form id="trade-form" class="trade-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="trade-date">تاريخ الصفقة</label>
+                        <input type="date" id="trade-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="asset">الأصل/زوج العملات</label>
+                        <input type="text" id="asset" placeholder="مثل: EUR/USD, الذهب" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="trade-type">نوع الصفقة</label>
+                        <select id="trade-type" required>
+                            <option value="">اختر نوع الصفقة</option>
+                            <option value="buy">شراء (Buy)</option>
+                            <option value="sell">بيع (Sell)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="lot-size">حجم اللوت/العقد</label>
+                        <input type="number" id="lot-size" step="0.01" placeholder="مثل: 0.1" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="entry-time">وقت الدخول</label>
+                        <input type="time" id="entry-time" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="exit-time">وقت الخروج</label>
+                        <input type="time" id="exit-time" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="entry-price">سعر الدخول</label>
+                        <input type="number" id="entry-price" step="0.00001" placeholder="سعر الدخول" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="exit-price">سعر الخروج</label>
+                        <input type="number" id="exit-price" step="0.00001" placeholder="سعر الخروج" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="exit-reason">سبب الخروج</label>
+                    <select id="exit-reason" required>
+                        <option value="">اختر سبب الخروج</option>
+                        <option value="SL">SL - Stop Loss (وقف الخسارة)</option>
+                        <option value="TP">TP - Take Profit (جني الأرباح)</option>
+                        <option value="PK">PK - Partial Close (إغلاق جزئي)</option>
+                        <option value="BE">BE - Break Even (إغلاق بدون خسارة أو ربح)</option>
+                        <option value="manual">إغلاق يدوي</option>
+                        <option value="other">أخرى</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="entry-reason">سبب الدخول</label>
+                    <textarea id="entry-reason" placeholder="لماذا دخلت هذه الصفقة؟ ما الإشارات التي رأيتها؟"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="trade-comment">التعليق الشخصي</label>
+                    <textarea id="trade-comment" placeholder="ملاحظاتك بعد إغلاق الصفقة"></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="entry-screenshot">صورة بداية الصفقة</label>
+                        <input type="file" id="entry-screenshot" accept="image/*">
+                    </div>
+                    <div class="form-group">
+                        <label for="exit-screenshot">صورة نتيجة الصفقة</label>
+                        <input type="file" id="exit-screenshot" accept="image/*">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">حفظ الصفقة</button>
+            </form>
+        </div>
+
+        <!-- Trade History Page -->
+        <div id="trade-history" class="page">
+            <div class="page-header">
+                <h2><i class="fas fa-history"></i> سجل الصفقات</h2>
+                <p>جميع صفقاتك في مكان واحد</p>
+            </div>
+
+            <div class="filters">
+                <select id="asset-filter">
+                    <option value="">جميع الأصول</option>
+                </select>
+                <select id="type-filter">
+                    <option value="">جميع الأنواع</option>
+                    <option value="buy">شراء</option>
+                    <option value="sell">بيع</option>
+                </select>
+                <select id="result-filter">
+                    <option value="">جميع النتائج</option>
+                    <option value="profit">رابحة</option>
+                    <option value="loss">خاسرة</option>
+                </select>
+                <input type="date" id="date-filter" placeholder="تصفية بالتاريخ">
+            </div>
+
+            <div class="trades-table-container">
+                <table id="trades-table">
+                    <thead>
+                        <tr>
+                            <th>التاريخ</th>
+                            <th>الأصل</th>
+                            <th>النوع</th>
+                            <th>حجم اللوت</th>
+                            <th>سعر الدخول</th>
+                            <th>سعر الخروج</th>
+                            <th>سبب الخروج</th>
+                            <th>النتيجة</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="trades-tbody">
+                        <tr>
+                            <td colspan="9" class="no-data">لا توجد صفقات بعد</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Analysis Page -->
+        <div id="analysis" class="page">
+            <div class="page-header">
+                <h2><i class="fas fa-analytics"></i> تحليل الأداء</h2>
+                <p>اكتشف نقاط القوة والضعف في تداولك</p>
+            </div>
+
+            <div class="analysis-grid">
+                <div class="analysis-card">
+                    <h3>أفضل الأصول أداءً</h3>
+                    <div id="best-assets"></div>
+                </div>
+                <div class="analysis-card">
+                    <h3>أوقات التداول المثالية</h3>
+                    <div id="best-times"></div>
+                </div>
+                <div class="analysis-card">
+                    <h3>تحليل الأخطاء</h3>
+                    <div id="error-analysis"></div>
+                </div>
+                <div class="analysis-card">
+                    <h3>اتجاهات الأداء</h3>
+                    <canvas id="performanceChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notes Page -->
+        <div id="notes" class="page">
+            <div class="page-header">
+                <h2><i class="fas fa-sticky-note"></i> الملاحظات الشخصية</h2>
+                <p>دون أفكارك وتعلمك من السوق</p>
+            </div>
+
+            <div class="notes-container">
+                <div class="note-form">
+                    <h3>إضافة ملاحظة جديدة</h3>
+                    <form id="note-form">
+                        <input type="text" id="note-title" placeholder="عنوان الملاحظة" required>
+                        <select id="note-category">
+                            <option value="general">عام</option>
+                            <option value="strategy">استراتيجية</option>
+                            <option value="psychology">علم النفس</option>
+                            <option value="market">تحليل السوق</option>
+                            <option value="goals">الأهداف</option>
+                        </select>
+                        <textarea id="note-content" placeholder="محتوى الملاحظة..." required></textarea>
+                        <button type="submit" class="btn btn-primary">حفظ الملاحظة</button>
+                    </form>
+                </div>
+
+                <div class="notes-list">
+                    <h3>ملاحظاتك</h3>
+                    <div id="notes-container">
+                        <p class="no-data">لا توجد ملاحظات بعد</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Self Review Page -->
+        <div id="review" class="page">
+            <div class="page-header">
+                <h2><i class="fas fa-star"></i> تقييم النفس</h2>
+                <p>قيم أداءك بانتظام لتحسين مهاراتك</p>
+            </div>
+
+            <div class="review-container">
+                <form id="review-form">
+                    <h3>تقييم الأسبوع الحالي</h3>
+                    
+                    <div class="review-section">
+                        <h4>الانضباط في التداول</h4>
+                        <div class="rating">
+                            <span>ضعيف</span>
+                            <input type="range" id="discipline-rating" min="1" max="10" value="5">
+                            <span>ممتاز</span>
+                            <span class="rating-value">5</span>
+                        </div>
+                    </div>
+
+                    <div class="review-section">
+                        <h4>الالتزام بالخطة</h4>
+                        <div class="rating">
+                            <span>ضعيف</span>
+                            <input type="range" id="plan-rating" min="1" max="10" value="5">
+                            <span>ممتاز</span>
+                            <span class="rating-value">5</span>
+                        </div>
+                    </div>
+
+                    <div class="review-section">
+                        <h4>إدارة المخاطر</h4>
+                        <div class="rating">
+                            <span>ضعيف</span>
+                            <input type="range" id="risk-rating" min="1" max="10" value="5">
+                            <span>ممتاز</span>
+                            <span class="rating-value">5</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="achievements">الإنجازات هذا الأسبوع</label>
+                        <textarea id="achievements" placeholder="ما الذي حققته هذا الأسبوع؟"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="mistakes">الأخطاء المرتكبة</label>
+                        <textarea id="mistakes" placeholder="ما الأخطاء التي ارتكبتها؟"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="improvements">خطة التحسين</label>
+                        <textarea id="improvements" placeholder="كيف ستحسن أداءك الأسبوع القادم؟"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">حفظ التقييم</button>
+                </form>
+
+                <div class="review-history">
+                    <h3>تاريخ التقييمات</h3>
+                    <div id="review-history-list">
+                        <p class="no-data">لا توجد تقييمات سابقة</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
